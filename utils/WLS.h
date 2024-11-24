@@ -92,12 +92,12 @@ double goodStep(const Eigen::MatrixXd &X, const Eigen::VectorXd &W_diag,
                 const Eigen::VectorXd &Y, double initialStep, double gamma, double c) {
     double step = initialStep;
     const Eigen::MatrixXd W = W_diag.asDiagonal();
-
-    const double initialError = (Y - X * beta).transpose() * W * (Y - X * beta);
+    const Eigen::VectorXd ErrInit = Y - X * beta;
+    const double initialError = ErrInit.transpose() * W * ErrInit;
 
     while (step > 1e-8) {
         const Eigen::VectorXd candidateBeta = beta - step * grad;
-        const Eigen::VectorXd Err = Y - X * (beta - step * grad);
+        const Eigen::VectorXd Err = Y - X * candidateBeta;
         const double candidateError = Err.transpose() * W * Err;
 
         if (candidateError <= initialError - c * step * grad.squaredNorm()) {
